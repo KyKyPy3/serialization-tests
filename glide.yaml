@@ -1,0 +1,13 @@
+package: .
+import:
+- package: gopkg.in/vmihailenco/msgpack.v2
+- package: gopkg.in/mgo.v2
+  subpackages:
+  - bson
+- package: github.com/ugorji/go
+  subpackages:
+  - codec
+- package: github.com/klauspost/compress
+  subpackages:
+  - zlib
+- package: github.com/klauspost/cpuid

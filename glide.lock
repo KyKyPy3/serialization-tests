@@ -1,0 +1,20 @@
+hash: 1bf13055cbd410deee7e94065acabf0e5c48c9b51ec6e4673e58c4c1abb06ccf
+updated: 2016-03-12T18:09:17.673997442+03:00
+imports:
+- name: github.com/klauspost/compress
+  version: 2d3d403f37d2e70b722590bc286076a17422e1f2
+  subpackages:
+  - zlib
+- name: github.com/klauspost/cpuid
+  version: 09cded8978dc9e80714c4d85b0322337b0a1e5e0
+- name: github.com/ugorji/go
+  version: 187fa0f8af224437e08ecb3f208c4d1a94859a61
+  subpackages:
+  - codec
+- name: gopkg.in/mgo.v2
+  version: d90005c5262a3463800497ea5a89aed5fe22c886
+  subpackages:
+  - bson
+- name: gopkg.in/vmihailenco/msgpack.v2
+  version: 775d4b0cf44d799d42a1f6fded02252340f4e33d
+devImports: []
