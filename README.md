@@ -9,6 +9,7 @@ Benchmark tests popular json serializers
 * Bson
 
 #### Results
+```
 Benchmark__Encode________Cbor-8         	  300000	      4101 ns/op	  27.55 MB/s	    2897 B/op	       8 allocs/op
 Benchmark__Decode________Cbor-8         	  300000	      4741 ns/op	  23.83 MB/s	    3104 B/op	      11 allocs/op
 Benchmark__Roundtrip_____Cbor-8         	  200000	      9750 ns/op	  11.59 MB/s	    6003 B/op	      19 allocs/op
@@ -24,3 +25,4 @@ Benchmark__Roundtrip____Json-8          	  200000	     10343 ns/op	  14.21 MB/s	
 Benchmark__Encode_______Bson-8          	  500000	      3307 ns/op	  52.91 MB/s	     608 B/op	       8 allocs/op
 Benchmark__Decode_______Bson-8          	  300000	      5464 ns/op	  32.02 MB/s	     752 B/op	      43 allocs/op
 Benchmark__Roundtrip____Bson-8          	  200000	      9503 ns/op	  18.41 MB/s	    1360 B/op	      51 allocs/op
+```
