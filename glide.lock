@@ -1,12 +1,10 @@
-hash: 1bf13055cbd410deee7e94065acabf0e5c48c9b51ec6e4673e58c4c1abb06ccf
-updated: 2016-03-12T18:09:17.673997442+03:00
+hash: c8fe83b227bdb17fac1b9488ae57bdf82e0bf368b506e8ffafc3f35aabd9b22f
+updated: 2016-03-12T23:11:00.502856879+03:00
 imports:
 - name: github.com/klauspost/compress
   version: 2d3d403f37d2e70b722590bc286076a17422e1f2
   subpackages:
   - zlib
-- name: github.com/klauspost/cpuid
-  version: 09cded8978dc9e80714c4d85b0322337b0a1e5e0
 - name: github.com/ugorji/go
   version: 187fa0f8af224437e08ecb3f208c4d1a94859a61
   subpackages:

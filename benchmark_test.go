@@ -3,42 +3,61 @@ package benchmark
 import (
 	"bytes"
 	"encoding/json"
-	"io"
-	"reflect"
-	"testing"
-
 	"github.com/klauspost/compress/zlib"
 	"github.com/ugorji/go/codec"
 	"gopkg.in/mgo.v2/bson"
 	"gopkg.in/vmihailenco/msgpack.v2"
+	"io"
+	"io/ioutil"
+	"log"
+	"os"
+	"reflect"
+	"testing"
 )
 
-type Nested struct {
-	Child1 string
-	Child2 string
-}
+func loadJson() map[string]interface{} {
+	var jsonStruct map[string]interface{}
 
-type BenchStruct struct {
-	Name      string
-	Age       int
-	Hobby     []string
-	Married   bool
-	Weight    float64
-	Childrens Nested
-}
-
-func getStructRepresentation() BenchStruct {
-	return BenchStruct{
-		Name:    "Jack",
-		Age:     15,
-		Hobby:   []string{"books", "films", "skiing", "swimming"},
-		Married: true,
-		Weight:  1.65,
-		Childrens: Nested{
-			Child1: "Robert",
-			Child2: "Maks",
-		},
+	rawJson, err := ioutil.ReadFile("test.json")
+	if err != nil {
+		log.Fatalf("Failed to open file test.json: %s", err.Error())
 	}
+
+	json.Unmarshal(rawJson, &jsonStruct)
+
+	return jsonStruct
+}
+
+func validate(first interface{}, second interface{}) (result bool) {
+
+	result = true
+
+	switch reflect.TypeOf(first).Kind() {
+	case reflect.Slice:
+		s := reflect.ValueOf(first)
+
+		if len(second.([]interface{})) == s.Len() {
+
+			for i := 0; i < s.Len(); i++ {
+				result = result && validate(s.Index(i).Interface(), second.([]interface{})[i])
+			}
+		} else {
+			result = false
+		}
+
+	case reflect.Map:
+		for _, key := range reflect.ValueOf(first).MapKeys() {
+			if val := reflect.ValueOf(second).MapIndex(key); val.IsValid() {
+				result = result && validate(reflect.ValueOf(first).MapIndex(key).Interface(), val.Interface())
+			}
+		}
+	case reflect.Float64:
+		result = (first.(float64) == second)
+	case reflect.String:
+		result = (first.(string) == second)
+	}
+
+	return
 }
 
 //
@@ -47,7 +66,7 @@ func getStructRepresentation() BenchStruct {
 
 func Benchmark__Encode________Cbor(b *testing.B) {
 
-	jsonStruct := getStructRepresentation()
+	jsonStruct := loadJson()
 
 	b.ReportAllocs()
 
@@ -69,9 +88,9 @@ func Benchmark__Encode________Cbor(b *testing.B) {
 
 func Benchmark__Decode________Cbor(b *testing.B) {
 
-	jsonStruct := getStructRepresentation()
+	jsonStruct := loadJson()
 	var buf []byte
-	var data BenchStruct
+	var data map[string]interface{}
 
 	err := codec.NewEncoderBytes(&buf, new(codec.CborHandle)).Encode(jsonStruct)
 	if err != nil {
@@ -94,8 +113,8 @@ func Benchmark__Decode________Cbor(b *testing.B) {
 
 func Benchmark__Roundtrip_____Cbor(b *testing.B) {
 
-	jsonStruct := getStructRepresentation()
-	var data BenchStruct
+	jsonStruct := loadJson()
+	var data map[string]interface{}
 
 	b.ReportAllocs()
 
@@ -119,8 +138,10 @@ func Benchmark__Roundtrip_____Cbor(b *testing.B) {
 		}
 	}
 
-	if !reflect.DeepEqual(jsonStruct, data) {
-		b.Fatalf("Unmarshaled object differed:\n%v\n%v", jsonStruct, data)
+	if len(os.Getenv("VALIDATE")) > 0 {
+		if !validate(jsonStruct, data) {
+			b.Fatalf("Unmarshaled object differed:\n%v\n%v", jsonStruct, data)
+		}
 	}
 }
 
@@ -130,7 +151,7 @@ func Benchmark__Roundtrip_____Cbor(b *testing.B) {
 
 func Benchmark__Encode________MsgPack(b *testing.B) {
 
-	jsonStruct := getStructRepresentation()
+	jsonStruct := loadJson()
 
 	b.ReportAllocs()
 
@@ -150,8 +171,8 @@ func Benchmark__Encode________MsgPack(b *testing.B) {
 
 func Benchmark__Decode________MsgPack(b *testing.B) {
 
-	jsonStruct := getStructRepresentation()
-	var data BenchStruct
+	jsonStruct := loadJson()
+	var data map[string]interface{}
 
 	buf, err := msgpack.Marshal(jsonStruct)
 	if err != nil {
@@ -174,8 +195,8 @@ func Benchmark__Decode________MsgPack(b *testing.B) {
 
 func Benchmark__Roundtrip_____MsgPack(b *testing.B) {
 
-	jsonStruct := getStructRepresentation()
-	var data BenchStruct
+	jsonStruct := loadJson()
+	var data map[string]interface{}
 
 	b.ReportAllocs()
 
@@ -197,8 +218,10 @@ func Benchmark__Roundtrip_____MsgPack(b *testing.B) {
 		}
 	}
 
-	if !reflect.DeepEqual(jsonStruct, data) {
-		b.Fatalf("Unmarshaled object differed:\n%v\n%v", jsonStruct, data)
+	if len(os.Getenv("VALIDATE")) > 0 {
+		if !validate(jsonStruct, data) {
+			b.Fatalf("Unmarshaled object differed:\n%v\n%v", jsonStruct, data)
+		}
 	}
 }
 
@@ -211,7 +234,7 @@ func Benchmark__Encode_______JsonCompressed(b *testing.B) {
 	var jsonGZ bytes.Buffer
 
 	zipper := zlib.NewWriter(&jsonGZ)
-	jsonStruct := getStructRepresentation()
+	jsonStruct := loadJson()
 
 	b.ReportAllocs()
 
@@ -248,8 +271,8 @@ func Benchmark__Decode_______JsonCompressed(b *testing.B) {
 	var out bytes.Buffer
 
 	zipper := zlib.NewWriter(&jsonGZ)
-	jsonStruct := getStructRepresentation()
-	var data BenchStruct
+	jsonStruct := loadJson()
+	var data map[string]interface{}
 
 	buf, err := json.Marshal(jsonStruct)
 	if err != nil {
@@ -294,8 +317,8 @@ func Benchmark__Roundtrip____JsonCompressed(b *testing.B) {
 	var out bytes.Buffer
 	zipper := zlib.NewWriter(&jsonGZ)
 
-	jsonStruct := getStructRepresentation()
-	var data BenchStruct
+	jsonStruct := loadJson()
+	var data map[string]interface{}
 
 	b.ReportAllocs()
 
@@ -339,8 +362,10 @@ func Benchmark__Roundtrip____JsonCompressed(b *testing.B) {
 		b.Fatal(err)
 	}
 
-	if !reflect.DeepEqual(jsonStruct, data) {
-		b.Fatalf("Unmarshaled object differed:\n%v\n%v", jsonStruct, data)
+	if len(os.Getenv("VALIDATE")) > 0 {
+		if !reflect.DeepEqual(jsonStruct, data) {
+			b.Fatalf("Unmarshaled object differed:\n%v\n%v", jsonStruct, data)
+		}
 	}
 }
 
@@ -350,7 +375,7 @@ func Benchmark__Roundtrip____JsonCompressed(b *testing.B) {
 
 func Benchmark__Encode_______Json(b *testing.B) {
 
-	jsonStruct := getStructRepresentation()
+	jsonStruct := loadJson()
 
 	b.ReportAllocs()
 
@@ -370,8 +395,8 @@ func Benchmark__Encode_______Json(b *testing.B) {
 
 func Benchmark__Decode_______Json(b *testing.B) {
 
-	jsonStruct := getStructRepresentation()
-	var data BenchStruct
+	jsonStruct := loadJson()
+	var data map[string]interface{}
 
 	buf, err := json.Marshal(jsonStruct)
 	if err != nil {
@@ -394,8 +419,8 @@ func Benchmark__Decode_______Json(b *testing.B) {
 
 func Benchmark__Roundtrip____Json(b *testing.B) {
 
-	jsonStruct := getStructRepresentation()
-	var data BenchStruct
+	jsonStruct := loadJson()
+	var data map[string]interface{}
 
 	b.ReportAllocs()
 
@@ -417,8 +442,10 @@ func Benchmark__Roundtrip____Json(b *testing.B) {
 		}
 	}
 
-	if !reflect.DeepEqual(jsonStruct, data) {
-		b.Fatalf("Unmarshaled object differed:\n%v\n%v", jsonStruct, data)
+	if len(os.Getenv("VALIDATE")) > 0 {
+		if !reflect.DeepEqual(jsonStruct, data) {
+			b.Fatalf("Unmarshaled object differed:\n%v\n%v", jsonStruct, data)
+		}
 	}
 }
 
@@ -428,7 +455,7 @@ func Benchmark__Roundtrip____Json(b *testing.B) {
 
 func Benchmark__Encode_______Bson(b *testing.B) {
 
-	jsonStruct := getStructRepresentation()
+	jsonStruct := loadJson()
 
 	b.ReportAllocs()
 
@@ -448,8 +475,8 @@ func Benchmark__Encode_______Bson(b *testing.B) {
 
 func Benchmark__Decode_______Bson(b *testing.B) {
 
-	jsonStruct := getStructRepresentation()
-	var data BenchStruct
+	jsonStruct := loadJson()
+	var data map[string]interface{}
 
 	buf, err := bson.Marshal(jsonStruct)
 	if err != nil {
@@ -472,8 +499,8 @@ func Benchmark__Decode_______Bson(b *testing.B) {
 
 func Benchmark__Roundtrip____Bson(b *testing.B) {
 
-	jsonStruct := getStructRepresentation()
-	var data BenchStruct
+	jsonStruct := loadJson()
+	var data map[string]interface{}
 
 	b.ReportAllocs()
 
@@ -494,7 +521,9 @@ func Benchmark__Roundtrip____Bson(b *testing.B) {
 		}
 	}
 
-	if !reflect.DeepEqual(jsonStruct, data) {
-		b.Fatalf("Unmarshaled object differed:\n%v\n%v", jsonStruct, data)
+	if len(os.Getenv("VALIDATE")) > 0 {
+		if !reflect.DeepEqual(jsonStruct, data) {
+			b.Fatalf("Unmarshaled object differed:\n%v\n%v", jsonStruct, data)
+		}
 	}
 }
