@@ -10,19 +10,19 @@ Benchmark tests popular json serializers
 
 #### Results
 ```
-Benchmark__Encode________Cbor-8         	   50000	     27732 ns/op	 113.66 MB/s	    8368 B/op	      10 allocs/op
-Benchmark__Decode________Cbor-8         	   10000	    152000 ns/op	  20.74 MB/s	   16624 B/op	     773 allocs/op
-Benchmark__Roundtrip_____Cbor-8         	   10000	    180315 ns/op	  17.48 MB/s	   24992 B/op	     783 allocs/op
-Benchmark__Encode________MsgPack-8      	   10000	    116670 ns/op	  27.02 MB/s	   20941 B/op	     351 allocs/op
-Benchmark__Decode________MsgPack-8      	   20000	     79670 ns/op	  39.58 MB/s	   19922 B/op	     606 allocs/op
-Benchmark__Roundtrip_____MsgPack-8      	   10000	    194603 ns/op	  16.20 MB/s	   41005 B/op	     957 allocs/op
-Benchmark__Encode_______JsonCompressed-8	   10000	    168569 ns/op	   0.01 MB/s	   22745 B/op	     533 allocs/op
-Benchmark__Decode_______JsonCompressed-8	   10000	    190395 ns/op	   7.20 MB/s	   64403 B/op	     533 allocs/op
-Benchmark__Roundtrip____JsonCompressed-8	    5000	    321516 ns/op	   0.01 MB/s	   86867 B/op	    1056 allocs/op
-Benchmark__Encode_______Json-8          	   10000	    134020 ns/op	  26.03 MB/s	   22664 B/op	     533 allocs/op
-Benchmark__Decode_______Json-8          	   10000	    125861 ns/op	  27.71 MB/s	   23801 B/op	     516 allocs/op
-Benchmark__Roundtrip____Json-8          	    5000	    264933 ns/op	  13.17 MB/s	   46455 B/op	    1049 allocs/op
-Benchmark__Encode_______Bson-8          	   20000	     88840 ns/op	  42.76 MB/s	   25225 B/op	     359 allocs/op
-Benchmark__Decode_______Bson-8          	   10000	    157969 ns/op	  24.05 MB/s	   40362 B/op	    1264 allocs/op
-Benchmark__Roundtrip____Bson-8          	   10000	    256740 ns/op	  14.80 MB/s	   65595 B/op	    1623 allocs/op
+Benchmark__Encode________Cbor-8         	   20000	     71203 ns/op	 117.48 MB/s	   32944 B/op	      12 allocs/op
+Benchmark__Decode________Cbor-8         	    3000	    432005 ns/op	  19.36 MB/s	   40216 B/op	    2159 allocs/op
+Benchmark__Roundtrip_____Cbor-8         	    3000	    531434 ns/op	  15.74 MB/s	   73160 B/op	    2171 allocs/op
+Benchmark__Encode________MsgPack-8      	    5000	    306260 ns/op	  27.36 MB/s	   49907 B/op	     968 allocs/op
+Benchmark__Decode________MsgPack-8      	   10000	    214967 ns/op	  38.98 MB/s	   59649 B/op	    1690 allocs/op
+Benchmark__Roundtrip_____MsgPack-8      	    3000	    547434 ns/op	  15.31 MB/s	  109754 B/op	    2658 allocs/op
+Benchmark__Encode_______JsonCompressed-8	    3000	    422254 ns/op	   0.00 MB/s	   54790 B/op	    1478 allocs/op
+Benchmark__Decode_______JsonCompressed-8	    3000	    464569 ns/op	   4.50 MB/s	  117206 B/op	    1446 allocs/op
+Benchmark__Roundtrip____JsonCompressed-8	    2000	    881305 ns/op	   0.00 MB/s	  171795 B/op	    2915 allocs/op
+Benchmark__Encode_______Json-8          	    5000	    391100 ns/op	  24.37 MB/s	   54520 B/op	    1478 allocs/op
+Benchmark__Decode_______Json-8          	    3000	    392785 ns/op	  24.27 MB/s	   76634 B/op	    1430 allocs/op
+Benchmark__Roundtrip____Json-8          	    2000	    796115 ns/op	  11.97 MB/s	  131150 B/op	    2908 allocs/op
+Benchmark__Encode_______Bson-8          	   10000	    249024 ns/op	  40.42 MB/s	   70085 B/op	     982 allocs/op
+Benchmark__Decode_______Bson-8          	    3000	    524408 ns/op	  19.19 MB/s	  124777 B/op	    3580 allocs/op
+Benchmark__Roundtrip____Bson-8          	    2000	    712524 ns/op	  14.13 MB/s	  195334 B/op	    4562 allocs/op
 ```

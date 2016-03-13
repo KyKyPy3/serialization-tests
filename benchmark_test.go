@@ -2,8 +2,8 @@ package benchmark
 
 import (
 	"bytes"
-	"encoding/json"
 	"github.com/klauspost/compress/zlib"
+	"github.com/pquerna/ffjson/ffjson"
 	"github.com/ugorji/go/codec"
 	"gopkg.in/mgo.v2/bson"
 	"gopkg.in/vmihailenco/msgpack.v2"
@@ -23,7 +23,7 @@ func loadJson() map[string]interface{} {
 		log.Fatalf("Failed to open file test.json: %s", err.Error())
 	}
 
-	json.Unmarshal(rawJson, &jsonStruct)
+	ffjson.Unmarshal(rawJson, &jsonStruct)
 
 	return jsonStruct
 }
@@ -244,7 +244,7 @@ func Benchmark__Encode_______JsonCompressed(b *testing.B) {
 		jsonGZ.Reset()
 		zipper.Reset(&jsonGZ)
 
-		buf, err := json.Marshal(jsonStruct)
+		buf, err := ffjson.Marshal(jsonStruct)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -274,7 +274,7 @@ func Benchmark__Decode_______JsonCompressed(b *testing.B) {
 	jsonStruct := loadJson()
 	var data map[string]interface{}
 
-	buf, err := json.Marshal(jsonStruct)
+	buf, err := ffjson.Marshal(jsonStruct)
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -304,7 +304,7 @@ func Benchmark__Decode_______JsonCompressed(b *testing.B) {
 		}
 		io.Copy(&out, r)
 
-		err = json.Unmarshal(out.Bytes(), &data)
+		err = ffjson.Unmarshal(out.Bytes(), &data)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -328,7 +328,7 @@ func Benchmark__Roundtrip____JsonCompressed(b *testing.B) {
 		jsonGZ.Reset()
 		zipper.Reset(&jsonGZ)
 
-		buf, err := json.Marshal(jsonStruct)
+		buf, err := ffjson.Marshal(jsonStruct)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -347,7 +347,7 @@ func Benchmark__Roundtrip____JsonCompressed(b *testing.B) {
 		}
 		io.Copy(&out, r)
 
-		err = json.Unmarshal(buf, &data)
+		err = ffjson.Unmarshal(buf, &data)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -382,7 +382,7 @@ func Benchmark__Encode_______Json(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		buf, err := json.Marshal(jsonStruct)
+		buf, err := ffjson.Marshal(jsonStruct)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -398,7 +398,7 @@ func Benchmark__Decode_______Json(b *testing.B) {
 	jsonStruct := loadJson()
 	var data map[string]interface{}
 
-	buf, err := json.Marshal(jsonStruct)
+	buf, err := ffjson.Marshal(jsonStruct)
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -410,7 +410,7 @@ func Benchmark__Decode_______Json(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		err := json.Unmarshal(buf, &data)
+		err := ffjson.Unmarshal(buf, &data)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -427,12 +427,12 @@ func Benchmark__Roundtrip____Json(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		buf, err := json.Marshal(jsonStruct)
+		buf, err := ffjson.Marshal(jsonStruct)
 		if err != nil {
 			b.Fatal(err)
 		}
 
-		err = json.Unmarshal(buf, &data)
+		err = ffjson.Unmarshal(buf, &data)
 		if err != nil {
 			b.Fatal(err)
 		}

@@ -1,10 +1,14 @@
-hash: c8fe83b227bdb17fac1b9488ae57bdf82e0bf368b506e8ffafc3f35aabd9b22f
-updated: 2016-03-12T23:11:00.502856879+03:00
+hash: 561b835abaf93339f60a94a6ffcc92ee2b991a014fd1f998394f19be555c0c97
+updated: 2016-03-13T12:50:21.356143569+03:00
 imports:
 - name: github.com/klauspost/compress
   version: 2d3d403f37d2e70b722590bc286076a17422e1f2
   subpackages:
   - zlib
+- name: github.com/pquerna/ffjson
+  version: 215028ffa1b291d28e4007437cbdb53a9a958a3d
+  subpackages:
+  - ffjson
 - name: github.com/ugorji/go
   version: 187fa0f8af224437e08ecb3f208c4d1a94859a61
   subpackages:
